@@ -1,17 +1,17 @@
 package com.webflux.reativo.controller;
 
+import com.webflux.reativo.model.Dashboard;
+import com.webflux.reativo.reposotitory.DashboardRepository;
+import io.netty.util.internal.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.webflux.reativo.model.Dashboard;
-import com.webflux.reativo.reposotitory.DashboardRepository;
-
-import io.netty.util.internal.ThreadLocalRandom;
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+
+import java.time.Duration;
 
 @RestController
 @RequestMapping(value = "dashboard")
@@ -21,9 +21,10 @@ public class DashboardController {
 	@Autowired
 	private DashboardRepository repo;
 	
-	@GetMapping
+	@GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Dashboard> get() {
-		return this.repo.findAll();
+		//return this.repo.findAll().delayElements(Duration.ofMillis(1000));
+		return this.repo.findAllByIdContaining("a").delayElements(Duration.ofMillis(1000));
 	}
 
 	@GetMapping(value = "insert")
